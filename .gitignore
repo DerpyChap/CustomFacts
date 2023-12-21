@@ -361,3 +361,12 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+
+# macOS metadata files
+.DS_Store
+
+# Thunderstore zip file
+*.zip
+
+# VSCode settings
+.vscode/

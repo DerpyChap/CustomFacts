@@ -1,0 +1,11 @@
+{
+    "name": "Real Fake Trombone Facts",
+    "description": "Adds adds custom facts to Trombone Champ (forked from Steven's CustomFacts).",
+    "version_number": "1.0.0",
+    "dependencies": [
+      "BepInEx-BepInExPack_TromboneChamp-5.4.21",
+      "TromboneChamps-BaboonAPI-2.4.1",
+      "TromboneChamps-Newtonsoft_Json-13.0.1"
+    ],
+    "website_url": "https://github.com/DerpyChap/RealFakeTromboneFacts"
+}

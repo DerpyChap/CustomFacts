@@ -5,6 +5,14 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using UnityEngine;
+using Newtonsoft.Json;
+
+[JsonObject]
+public class Fact
+{
+    [JsonRequired] public string text;
+    [JsonRequired] public string author;
+}
 
 namespace CustomFacts
 {
@@ -14,14 +22,14 @@ namespace CustomFacts
     {
         private static Plugin Instance;
         
-        private const string PLUGIN_GUID = "com.steven.trombone.customfacts";
-        private const string PLUGIN_NAME = "Custom Facts";
+        private const string PLUGIN_GUID = "derpychap.realfaketrombonefacts";
+        private const string PLUGIN_NAME = "Real Fake Trombone Facts";
         private const string PLUGIN_VERSION = "1.0.0";
         private const string SETFACT_METHOD_NAME = "setFact";
-        private const string CONFIG_FILENAME = "facts.txt";
-        private const string RESOURCE_NAME = "CustomFacts.Resources.facts.txt";
+        private const string CONFIG_FILENAME = "facts.json";
+        private const string RESOURCE_NAME = "CustomFacts.Resources.facts.json";
 
-        private List<string> AllFacts = new List<string>();
+        private List<Fact> AllFacts = new List<Fact>();
         private bool firstRun = true;
 
         private void Awake()
@@ -53,7 +61,7 @@ namespace CustomFacts
             }
 
             Logger.LogDebug("Loading custom facts...");
-            var facts = File.ReadAllLines(customFactsFilePath);
+            var facts = JsonConvert.DeserializeObject<List<Fact>>(File.ReadAllText(customFactsFilePath));
 
             AllFacts.AddRange(facts);
 
@@ -73,7 +81,12 @@ namespace CustomFacts
             if (!Instance.firstRun) return;
 
             Instance.Logger.LogDebug($"Adding {___tfacts.Length} default facts.");
-            Instance.AllFacts.AddRange(___tfacts);
+            foreach (var f in ___tfacts){
+                Fact singlefact = new Fact();
+                singlefact.author = "holywow";
+                singlefact.text = f;
+                Instance.AllFacts.Add(singlefact);
+            }
             Instance.firstRun = false;
         }
 
@@ -84,7 +97,7 @@ namespace CustomFacts
 
             Instance.Logger.LogDebug($"Loading fact at index: {index}");
             Instance.Logger.LogDebug(Instance.AllFacts[index]);
-            __instance.facttext.text = Instance.AllFacts[index];
+            __instance.facttext.text = Instance.AllFacts[index].text;
             __instance.facttext.resizeTextMinSize = 1;
 
             return false;
