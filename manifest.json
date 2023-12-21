@@ -1,5 +1,5 @@
 {
-    "name": "Real Fake Trombone Facts",
+    "name": "RealFakeTromboneFacts",
     "description": "Adds adds custom facts to Trombone Champ (forked from Steven's CustomFacts).",
     "version_number": "1.0.0",
     "dependencies": [
