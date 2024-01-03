@@ -41,7 +41,8 @@ namespace CustomFacts
         private const string PLUGIN_NAME = "Real Fake Trombone Facts";
         private const string PLUGIN_VERSION = "1.0.0";
         private const string SETFACT_METHOD_NAME = "setFact";
-        private const string FACTS_FILENAME = "facts.json";
+        private const string CUSTOM_FACTS_FILENAME = "facts.txt";
+        private const string RESOURCE_NAME = "CustomFacts.Resources.facts.json";
         private const string API_URL = "https://guardelo.la/api/facts/all/";
         public ConfigEntry<bool> basegameFacts;
         public ConfigEntry<bool> loadFactsFile;
@@ -64,6 +65,9 @@ namespace CustomFacts
             Instance = this;
 
             if (loadFactsFile.Value == true) LoadFacts();
+
+            LoadCustomFacts();
+
             if (downloadFacts.Value == true) StartCoroutine(DownloadFacts());
 
             var harmony = new Harmony(PLUGIN_GUID);
@@ -101,26 +105,41 @@ namespace CustomFacts
 
         private void LoadFacts()
         {
-            var customFactsFilePath = Path.Combine(Paths.ConfigPath, FACTS_FILENAME);
-
-            if (!File.Exists(customFactsFilePath))
+            Logger.LogDebug("Loading facts...");
+            
+            using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(RESOURCE_NAME))
+            using (StreamReader reader = new StreamReader(stream))
             {
-                return;
+                var facts = JsonConvert.DeserializeObject<List<Fact>>(reader.ReadToEnd());
+
+                AllFacts.AddRange(facts);
+
+                Logger.LogDebug($"Finished loading {AllFacts.Count()} facts!");
             }
-
-            Logger.LogDebug("Loading custom facts...");
-            var facts = JsonConvert.DeserializeObject<List<Fact>>(File.ReadAllText(customFactsFilePath));
-
-            AllFacts.AddRange(facts);
-
-            Logger.LogDebug($"Finished loading {AllFacts.Count()} custom facts!");
         }
 
-        private void WriteResourceToFile(string resourceName, string fileName)
+        private void LoadCustomFacts()
         {
-            using (var resource = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName))
-            using (var file = new FileStream(fileName, FileMode.Create, FileAccess.Write))
-            resource.CopyTo(file);
+            var customFactsFilePath = Path.Combine(Paths.ConfigPath, CUSTOM_FACTS_FILENAME);
+
+            if (File.Exists(customFactsFilePath))
+            {
+                Logger.LogDebug("Loading custom facts.txt...");
+
+                var facts = File.ReadAllLines(customFactsFilePath);
+
+                foreach (var f in facts)
+                {
+                    Fact singlefact = new Fact
+                    {
+                        author = null,
+                        fact = f
+                    };
+                    AllFacts.Add(singlefact);
+                }
+
+                Logger.LogDebug($"Finished loading {facts.Count()} custom facts from facts.txt!");
+            }
         }
 
         [HarmonyPatch(typeof(LoadController), MethodType.Constructor)]
