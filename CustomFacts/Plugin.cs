@@ -12,6 +12,7 @@ public class Fact
 {
     [JsonRequired] public string text;
     [JsonRequired] public string author;
+    public int id;
 }
 
 namespace CustomFacts
@@ -82,9 +83,11 @@ namespace CustomFacts
 
             Instance.Logger.LogDebug($"Adding {___tfacts.Length} default facts.");
             foreach (var f in ___tfacts){
-                Fact singlefact = new Fact();
-                singlefact.author = "holywow";
-                singlefact.text = f;
+                Fact singlefact = new Fact
+                {
+                    author = "Holy Wow",
+                    text = f
+                };
                 Instance.AllFacts.Add(singlefact);
             }
             Instance.firstRun = false;
