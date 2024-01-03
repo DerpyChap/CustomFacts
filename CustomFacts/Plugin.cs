@@ -9,6 +9,7 @@ using System.Reflection;
 using UnityEngine;
 using Newtonsoft.Json;
 using UnityEngine.Networking;
+using UnityEngine.UI;
 
 [JsonObject]
 public class Fact
@@ -46,6 +47,7 @@ namespace CustomFacts
         private const string API_URL = "https://guardelo.la/api/facts/all/";
         public ConfigEntry<bool> basegameFacts;
         public ConfigEntry<bool> loadFactsFile;
+        public ConfigEntry<bool> showAuthor;
         public ConfigEntry<bool> downloadFacts;
         public ConfigEntry<int> minimumUpvotes;
         public ConfigEntry<int> minimumDelta;
@@ -58,6 +60,7 @@ namespace CustomFacts
             var customFile = new ConfigFile(Path.Combine(Paths.ConfigPath, "facts.cfg"), true);
             basegameFacts = customFile.Bind("General", "Enable Base Game Facts", true, "Controls if facts from the base game should be included in the rotation.");
             loadFactsFile = customFile.Bind("General", "Load Facts From File", true, "Controls if facts should be loaded from the mod's curated facts.json file.");
+            showAuthor = customFile.Bind("General", "Show Fact Author", true, "Shows who wrote the fact in the bottom left corner of the loading screen, if available.");
             downloadFacts = customFile.Bind("Web", "Download Latest Facts", true, "If enabled, will download the latest facts from the #real-fake-trombone-facts channel on the Modding Discord.");
             minimumUpvotes = customFile.Bind("Web", "Mininum Upvotes", 1, "The minimum amount of upvotes needed before a fact from the Discord is added to the rotation.");
             minimumDelta = customFile.Bind("Web", "Minimum Vote Delta", 3, "The minimum vote delta (the difference between upvotes and downvotes) before a fact is added to the rotation.");
@@ -177,6 +180,31 @@ namespace CustomFacts
                 Instance.Logger.LogDebug(Instance.AllFacts[index]);
                 __instance.facttext.text = Instance.AllFacts[index].fact;
                 __instance.facttext.resizeTextMinSize = 1;
+
+                if (Instance.AllFacts[index].author != null && Instance.showAuthor.Value == true)
+                {
+                    GameObject author_parent = new("Author");
+                    Canvas author_canvas = author_parent.AddComponent<Canvas>();
+                    author_canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+                    author_parent.AddComponent<CanvasScaler>();
+                    author_parent.AddComponent<GraphicRaycaster>();
+
+                    GameObject author = new GameObject("Author Text");
+                    author.transform.parent = author_parent.transform;
+
+                    Text authortext = author.AddComponent<Text>();
+                    RectTransform rect = authortext.GetComponent<RectTransform>();
+
+                    rect.pivot = new Vector2(-0.01f, -0.1f);
+                    rect.sizeDelta = new Vector2(1280, 100);
+
+                    authortext.fontSize = 30;
+                    authortext.supportRichText = false;
+                    authortext.alignment = TextAnchor.LowerLeft;
+                    authortext.font = __instance.facttext.font;
+                    authortext.color = new Color(0.5f, 0.5f, 0.5f, 0.8f);
+                    authortext.text = $"Fact verified by {Instance.AllFacts[index].author}";
+                }
             }
 
             return false;
