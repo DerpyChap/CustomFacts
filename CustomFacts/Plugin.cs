@@ -40,13 +40,13 @@ namespace CustomFacts
         
         private const string PLUGIN_GUID = "derpychap.realfaketrombonefacts";
         private const string PLUGIN_NAME = "Real Fake Trombone Facts";
-        private const string PLUGIN_VERSION = "1.0.0";
+        private const string PLUGIN_VERSION = "1.1.0";
         private const string SETFACT_METHOD_NAME = "setFact";
         private const string CUSTOM_FACTS_FILENAME = "facts.txt";
         private const string RESOURCE_NAME = "CustomFacts.Resources.facts.json";
         private const string API_URL = "https://guardelo.la/api/facts/all/";
         public ConfigEntry<bool> basegameFacts;
-        public ConfigEntry<bool> loadFactsFile;
+        public ConfigEntry<bool> loadModFacts;
         public ConfigEntry<bool> showAuthor;
         public ConfigEntry<bool> downloadFacts;
         public ConfigEntry<int> minimumUpvotes;
@@ -59,7 +59,7 @@ namespace CustomFacts
         {
             var customFile = new ConfigFile(Path.Combine(Paths.ConfigPath, "facts.cfg"), true);
             basegameFacts = customFile.Bind("General", "Enable Base Game Facts", true, "Controls if facts from the base game should be included in the rotation.");
-            loadFactsFile = customFile.Bind("General", "Load Facts From File", true, "Controls if facts should be loaded from the mod's curated facts.json file.");
+            loadModFacts = customFile.Bind("General", "Load Built-In Facts", true, "Controls if facts should be loaded from the mod's built-in curated facts list.");
             showAuthor = customFile.Bind("General", "Show Fact Author", true, "Shows who wrote the fact in the bottom left corner of the loading screen, if available.");
             downloadFacts = customFile.Bind("Web", "Download Latest Facts", true, "If enabled, will download the latest facts from the #real-fake-trombone-facts channel on the Modding Discord.");
             minimumUpvotes = customFile.Bind("Web", "Mininum Upvotes", 1, "The minimum amount of upvotes needed before a fact from the Discord is added to the rotation.");
@@ -67,7 +67,7 @@ namespace CustomFacts
 
             Instance = this;
 
-            if (loadFactsFile.Value == true) LoadFacts();
+            if (loadModFacts.Value == true) LoadFacts();
 
             LoadCustomFacts();
 

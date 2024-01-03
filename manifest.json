@@ -1,7 +1,7 @@
 {
     "name": "RealFakeTromboneFacts",
     "description": "Adds adds custom facts to Trombone Champ (forked from Steven's CustomFacts).",
-    "version_number": "1.0.0",
+    "version_number": "1.1.0",
     "dependencies": [
       "BepInEx-BepInExPack_TromboneChamp-5.4.21",
       "TromboneChamps-BaboonAPI-2.4.1",
