@@ -195,10 +195,13 @@ namespace CustomFacts
                     Text authortext = author.AddComponent<Text>();
                     RectTransform rect = authortext.GetComponent<RectTransform>();
 
+                    float scale = author_canvas.renderingDisplaySize.x / 1280;
+                    float font_size = 20 * scale;
+
                     rect.pivot = new Vector2(-0.01f, -0.1f);
                     rect.sizeDelta = new Vector2(1280, 100);
 
-                    authortext.fontSize = 30;
+                    authortext.fontSize = System.Convert.ToInt32(font_size);
                     authortext.supportRichText = false;
                     authortext.alignment = TextAnchor.LowerLeft;
                     authortext.font = __instance.facttext.font;
